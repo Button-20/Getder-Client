@@ -1,0 +1,23 @@
+# Ignore all files and directories starting with "."
+.*
+
+# Ignore node_modules directory
+node_modules/
+
+# Ignore any log files
+*.log
+
+# Ignore any compiled binaries or libraries
+*.dll
+*.so
+*.dylib
+
+# Ignore any temporary files or directories
+.tmp
+.temp
+.tmp/*
+
+# Ignore any files generated during the build process
+/build
+/dist
+/out
