@@ -5,6 +5,14 @@
       "distribution": "internal"
     },
     "preview": {
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://getder-backend-production.up.railway.app/api/v1",
+        "EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID": "843710926213-pgnspotntb2euno3fh3pkdkidaf56goe.apps.googleusercontent.com",
+        "EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID": "843710926213-stvmti2an0spicglkvpg05mtuhjs380e.apps.googleusercontent.com",
+        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "664394951146-c07blgdfrq8tg5snbdb559bd7rhn2n4g.apps.googleusercontent.com",
+        "EXPO_PUBLIC_GOOGLE_MAP_API_KEY": "AIzaSyDeEW9L9JFBpApYs8HHhqJloKsoJaOvie4",
+        "EXPO_PUBLIC_SECRET_KEY": "CGERTC3uCHdFjU6ppFb4+A3X0o+ta4KG9r4ieJ0zOgjd+TrkWfC/9AKEMFE//VZtpV7lGVOHCHJ5ilD+5cinyA=="
+      },
       "android": {
         "buildType": "apk"
       }
