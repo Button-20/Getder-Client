@@ -2,6 +2,24 @@ import { get, post } from "../lib/http.service";
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
+export const sendOtp = async (phone) => {
+  try {
+    return await post(`${API_URL}/send-otp`, phone);
+  } catch (error) {
+    console.error("Error sending otp: ", error);
+  }
+};
+
+export const verifyOtp = async (data) => {
+  try {
+    return await post(`${API_URL}/verify-otp`, {
+      ...data,
+    });
+  } catch (error) {
+    console.error("Error verifying otp: ", error);
+  }
+};
+
 export const postLogin = async ({
   firstname,
   lastname,

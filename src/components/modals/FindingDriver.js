@@ -32,7 +32,7 @@ const FindingDriver = ({ navigation, bottomSheetRef3 }) => {
     <BottomSheetModal
       ref={bottomSheetRef3}
       index={0}
-      snapPoints={["35%"]}
+      snapPoints={[280]}
       enablePanDownToClose={false}
       handleComponent={() => null}
     >

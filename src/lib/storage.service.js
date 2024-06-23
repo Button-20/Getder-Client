@@ -5,7 +5,6 @@ const {
   REQUEST,
   ACCESS_TOKEN,
   USER,
-  REGISTER_USER,
   CAR_TYPES,
   NEGOTIATION,
 } = require("../utils/variables");
@@ -150,29 +149,6 @@ const removeUserDetails = async () => {
   }
 };
 
-const getRegisterUser = async () => {
-  try {
-    return await get(REGISTER_USER);
-  } catch (error) {
-    console.error("Error getting register user: ", error);
-  }
-};
-
-const setRegisterUser = async (user) => {
-  try {
-    await set(REGISTER_USER, user);
-  } catch (error) {
-    console.error("Error setting register user: ", error);
-  }
-};
-
-const removeRegisterUser = async () => {
-  try {
-    await remove(REGISTER_USER);
-  } catch (error) {
-    console.error("Error removing register user: ", error);
-  }
-};
 
 const getCarTypes = async () => {
   try {
@@ -241,9 +217,6 @@ export const storageService = {
   getUserDetails,
   setUserDetails,
   removeUserDetails,
-  getRegisterUser,
-  setRegisterUser,
-  removeRegisterUser,
   getCarTypes,
   setCarTypes,
   removeCarTypes,

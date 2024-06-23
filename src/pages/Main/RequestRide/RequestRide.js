@@ -127,18 +127,26 @@ const RequestRide = ({ navigation }) => {
     !negotiation?.request && openBottomSheet(bottomSheetRef);
     const coords = [pickup_location, dropoff_location];
     setTimeout(() => {
-      mapRef.current.fitToSuppliedMarkers(["pickup", "dropoff"], {
-        edgePadding: { top: 500, right: 500, bottom: 500, left: 500 },
-      });
+      try {
+        mapRef.current.fitToSuppliedMarkers(["pickup", "dropoff"], {
+          edgePadding: { top: 500, right: 500, bottom: 500, left: 500 },
+        });
 
-      mapRef.current.fitToCoordinates(coords, {
-        edgePadding: { top: 500, right: 500, bottom: 500, left: 500 },
-      });
+        mapRef.current.fitToCoordinates(coords, {
+          edgePadding: { top: 500, right: 500, bottom: 500, left: 500 },
+        });
+      } catch (error) {
+        console.log("Error fitting map to coordinates: ", error);
+      }
     }, 1000);
     getTravelTime({
       pickup_location: `${pickup_location.lat},${pickup_location.lng}`,
       dropoff_location: `${dropoff_location.lat},${dropoff_location.lng}`,
-    }).then(({ rows }) => setTravelTime(rows[0].elements[0] || {}));
+    })
+      .then(({ rows }) => setTravelTime(rows[0].elements[0] || {}))
+      .catch((error) => {
+        console.log("Error getting travel time: ", error);
+      });
   }, [request.pickup_location, request.dropoff_location]);
 
   return (

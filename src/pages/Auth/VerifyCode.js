@@ -18,6 +18,7 @@ import {
   getProfile,
   postLogin,
   postRegister,
+  verifyOtp,
 } from "../../services/user.service";
 import {
   BorderRadii,
@@ -27,7 +28,7 @@ import {
   Spacing,
 } from "../../utils/styles";
 
-const VerifyCode = ({ navigation }) => {
+const VerifyCode = ({ route, navigation }) => {
   const { phoneAuth, setPhoneAuth } = usePhoneAuthContext();
 
   const { spinner, setSpinner } = useSpinnerContext();
@@ -47,15 +48,17 @@ const VerifyCode = ({ navigation }) => {
   const handleSubmit = async () => {
     try {
       // Validate the form
-      if (!otp) return;
+      if (otp.length !== 4) return;
 
       setSpinner(true);
       // If there are no errors, submit the form
-      const userCredentials = await phoneAuth.confirm(otp);
+      const verificationResp = await verifyOtp({
+        phone: route.params.phone,
+        otp,
+      });
 
-      const registeringUser = await storageService.getRegisterUser();
       let resp;
-      if (registeringUser) {
+      if (verificationResp?.status) {
         resp = await postRegister(registeringUser);
         await storageService.removeRegisterUser();
       } else {
@@ -66,7 +69,6 @@ const VerifyCode = ({ navigation }) => {
       }
       await storageService.setAccessToken(resp.token);
       setUser((await getUserProfile()) || null);
-      setPhoneAuth(null);
       setOtp("");
       navigation.navigate("MainLayout");
       setSpinner(false);
@@ -109,11 +111,12 @@ const VerifyCode = ({ navigation }) => {
           </Text>
           <View style={styles.inputContainer}>
             <OtpInput
-              numberOfDigits={6}
+              numberOfDigits={4}
               focusColor={Colors.accent}
               value={otp}
               autoFocus
               onTextChange={(text) => setOtp(text)}
+              onFilled={handleSubmit}
               theme={{
                 pinCodeTextStyle: {
                   fontFamily: Fonts.bold,
@@ -125,7 +128,7 @@ const VerifyCode = ({ navigation }) => {
         <View>
           <TouchableOpacity
             style={
-              otp.length !== 6
+              otp.length !== 4
                 ? {
                     ...styles.verifyButton,
                     backgroundColor: Colors.button_disabled_2,
@@ -133,12 +136,10 @@ const VerifyCode = ({ navigation }) => {
                 : styles.verifyButton
             }
             onPress={async () => {
-              if (otp.length === 6) {
-                await handleSubmit();
-              }
+              await handleSubmit();
             }}
             activeOpacity={0.8}
-            disabled={spinner || otp.length !== 6}
+            disabled={spinner || otp.length !== 4}
           >
             {spinner ? (
               <ActivityIndicator size="small" color="white" />

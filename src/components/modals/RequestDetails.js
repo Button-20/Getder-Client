@@ -18,13 +18,13 @@ const RequestDetails = ({
   postRequest,
   travelTime,
 }) => {
-  const {carTypes, setCarTypes} = useCarTypesContext();
+  const {carTypes} = useCarTypesContext();
 
   return (
     <BottomSheetModal
       ref={bottomSheetRef}
       index={1}
-      snapPoints={["20%", "60%"]}
+      snapPoints={["20%", 500]}
       enablePanDownToClose={false}
     >
       <View>

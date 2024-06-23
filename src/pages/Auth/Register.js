@@ -1,5 +1,4 @@
 import { AntDesign } from "@expo/vector-icons";
-import auth from "@react-native-firebase/auth";
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import {
@@ -14,7 +13,7 @@ import PhoneInput from "react-native-phone-number-input";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { usePhoneAuthContext } from "../../context/PhoneAuthContext";
 import { useSpinnerContext } from "../../context/SpinnerContext";
-import { storageService } from "../../lib/storage.service";
+import { sendOtp } from "../../services/user.service";
 import {
   BorderRadii,
   Colors,
@@ -76,13 +75,22 @@ const Register = ({ navigation }) => {
   };
 
   const handleSubmit = async () => {
-    setSpinner(true);
-    if (form.firstname || form.lastname || form.phone) {
-      await storageService.setRegisterUser(form);
-      const firebaseAuth = await auth().signInWithPhoneNumber(form.phone);
-      setPhoneAuth(firebaseAuth);
-      navigation.navigate("VerifyCode");
-      setSpinner(false);
+    try {
+      if (form.firstname || form.lastname || form.phone) {
+        setSpinner(true);
+        // const firebaseAuth = await auth().signInWithPhoneNumber(form.phone);
+        // console.log(firebaseAuth);
+        // setPhoneAuth(firebaseAuth);
+        const resp = await sendOtp(form.phone);
+        if (!resp?.status) throw new Error(resp?.message);
+
+        navigation.navigate("VerifyCode", {
+          ...form,
+        });
+        setSpinner(false);
+      }
+    } catch (error) {
+      console.log("Error: ", error);
     }
   };
 
