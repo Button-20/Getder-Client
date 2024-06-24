@@ -121,10 +121,36 @@ const RequestRide = ({ navigation }) => {
   }, []);
 
   useEffect(() => {
+    if (!negotiation?.request) return;
+
+    openBottomSheet(bottomSheetRef4);
+
+    let pickup_location, dropoff_location;
+
+    if (!negotiation?.request?.driverHasArrived) {
+      pickup_location = negotiation?.driver?.locationHistory.pop();
+      dropoff_location = {
+        lat: location.coords.latitude,
+        lng: location.coords.longitude,
+        description: "Current Location",
+      };
+    }
+
+    console.log(pickup_location, dropoff_location);
+
+    fitMapToCoordinates(pickup_location, dropoff_location);
+  }, [negotiation?.request]);
+
+  useEffect(() => {
     const { pickup_location, dropoff_location } = request;
     if (!pickup_location || !dropoff_location) return;
-    negotiation?.request && openBottomSheet(bottomSheetRef4);
+
     !negotiation?.request && openBottomSheet(bottomSheetRef);
+
+    fitMapToCoordinates(pickup_location, dropoff_location);
+  }, [request.pickup_location, request.dropoff_location]);
+
+  const fitMapToCoordinates = (pickup_location, dropoff_location) => {
     const coords = [pickup_location, dropoff_location];
     setTimeout(() => {
       try {
@@ -139,6 +165,7 @@ const RequestRide = ({ navigation }) => {
         console.log("Error fitting map to coordinates: ", error);
       }
     }, 1000);
+
     getTravelTime({
       pickup_location: `${pickup_location.lat},${pickup_location.lng}`,
       dropoff_location: `${dropoff_location.lat},${dropoff_location.lng}`,
@@ -147,7 +174,7 @@ const RequestRide = ({ navigation }) => {
       .catch((error) => {
         console.log("Error getting travel time: ", error);
       });
-  }, [request.pickup_location, request.dropoff_location]);
+  };
 
   return (
     <View>
@@ -163,7 +190,7 @@ const RequestRide = ({ navigation }) => {
                   dropoff_location: {
                     lat: location.coords.latitude,
                     lng: location.coords.longitude,
-                    description: "Kwabenya, Ghana",
+                    description: "Current location",
                   },
                 }
               : negotiation && negotiation?.request?.driverHasArrived

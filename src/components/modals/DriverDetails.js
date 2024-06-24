@@ -35,12 +35,14 @@ const DriverDetails = ({ bottomSheetRef5, bottomSheetRef4, negotiation }) => {
       <ScrollView style={styles.contentContainer}>
         <View style={styles.headerContainer}>
           <View>
-            <Text style={styles.heading}>Mark has arrived</Text>
+            <Text style={styles.heading}>
+              {negotiation?.driver?.firstname || "John"} has arrived
+            </Text>
             <Text style={styles.subHeading}>
               Meet your driver at your pick up location
             </Text>
           </View>
-          <Text style={styles.time}>0 {"\n"}min</Text>
+          <Text style={styles.time}>0 {"\n"}mins</Text>
         </View>
         <View style={styles.bodyContainer}>
           <View style={styles.driverContainer}>

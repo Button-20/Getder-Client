@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet } from "react-native";
+import { Image, StyleSheet } from "react-native";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
 import MapViewStyle from "../../utils/mapviewstyle.json";
@@ -26,8 +26,12 @@ const GoogleMapComponent = ({ location, request, mapRef, negotiation }) => {
             latitude: location?.coords.latitude,
             longitude: location?.coords.longitude,
           }}
-          icon={require("../../../assets/images/location.png")}
-        />
+        >
+          <Image
+            source={require("../../../assets/images/location.png")}
+            style={styles.marker}
+          />
+        </Marker>
       )}
       {request.pickup_location && request.dropoff_location && (
         <MapViewDirections
@@ -42,7 +46,6 @@ const GoogleMapComponent = ({ location, request, mapRef, negotiation }) => {
           apikey={process.env.EXPO_PUBLIC_GOOGLE_MAP_API_KEY}
           strokeWidth={3}
           strokeColor={Colors.accent}
-
         />
       )}
       {request.pickup_location && (
@@ -53,12 +56,20 @@ const GoogleMapComponent = ({ location, request, mapRef, negotiation }) => {
           }}
           description={request.pickup_location.description}
           identifier="pickup"
-          icon={
-            negotiation
-              ? require("../../../assets/images/car-icon.png")
-              : require("../../../assets/images/location.png")
-          }
-        />
+        >
+          {negotiation && (
+            <Image
+              source={require("../../../assets/images/car-icon.png")}
+              style={styles.marker}
+            />
+          )}
+          {!negotiation && (
+            <Image
+              source={require("../../../assets/images/location.png")}
+              style={styles.marker}
+            />
+          )}
+        </Marker>
       )}
       {request.dropoff_location && (
         <Marker
@@ -68,8 +79,12 @@ const GoogleMapComponent = ({ location, request, mapRef, negotiation }) => {
           }}
           description={request.dropoff_location.description}
           identifier="dropoff"
-          icon={require("../../../assets/images/location.png")}
-        />
+        >
+          <Image
+            source={require("../../../assets/images/location.png")}
+            style={styles.marker}
+          />
+        </Marker>
       )}
     </MapView>
   );
@@ -81,5 +96,11 @@ const styles = StyleSheet.create({
   map: {
     height: "100%",
     width: "100%",
+  },
+
+  marker: {
+    width: 30,
+    height: 30,
+    resizeMode: "contain",
   },
 });
