@@ -9,7 +9,7 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "cover",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#004080"
     },
     "assetBundlePatterns": ["**/*"],
     "plugins": [
@@ -24,7 +24,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#004080"
       },
       "package": "com.jasonaddy.clientside",
       "googleServicesFile": "./google-services.json"

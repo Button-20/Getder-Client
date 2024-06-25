@@ -121,8 +121,12 @@ const Home = ({ navigation }) => {
                       latitude: location?.coords.latitude,
                       longitude: location?.coords.longitude,
                     }}
-                    icon={require("../../../../assets/images/location.png")}
-                  />
+                  >
+                    <Image
+                      src={require("../../../../assets/images/location.png")}
+                      style={{ width: 30, height: 30, resizeMode: "contain" }}
+                    />
+                  </Marker>
                 </MapView>
               )}
             </View>
