@@ -6,6 +6,7 @@ import * as WebBrowser from "expo-web-browser";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -14,11 +15,10 @@ import {
 import PhoneInput, { isValidNumber } from "react-native-phone-number-input";
 import { decode as atob } from "base-64";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { usePhoneAuthContext } from "../../context/PhoneAuthContext";
 import { useSpinnerContext } from "../../context/SpinnerContext";
 import { useUserContext } from "../../context/UserContext";
 import { storageService } from "../../lib/storage.service";
-import { getProfile, postLogin } from "../../services/user.service";
+import { getProfile, postLogin, sendOtp } from "../../services/user.service";
 import {
   BorderRadii,
   Colors,
@@ -27,6 +27,7 @@ import {
   Spacing,
 } from "../../utils/styles";
 import { phoneValidation } from "../../utils/validations";
+import { useToast } from "react-native-toast-notifications";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -35,7 +36,7 @@ const Login = ({ navigation }) => {
 
   const { setUser } = useUserContext();
 
-  const { setPhoneAuth } = usePhoneAuthContext();
+  const toast = useToast();
 
   const [form, setForm] = useState({
     firstname: "",
@@ -82,7 +83,6 @@ const Login = ({ navigation }) => {
         });
         setSpinner(false);
         if (res.status == 200) {
-          setPhoneAuth(null);
           setSpinner(false);
           await storageService.setAccessToken(res.token);
           const resp = await getProfile();
@@ -97,6 +97,10 @@ const Login = ({ navigation }) => {
         }
 
         if (res.status == 400) {
+          toast.show(res.message, {
+            type: "danger",
+          });
+          return;
         }
       })();
     }
@@ -131,9 +135,10 @@ const Login = ({ navigation }) => {
       });
 
       if (resp.status == 200) {
-        const firebaseAuth = await auth().signInWithPhoneNumber(form.phone);
-        setPhoneAuth(firebaseAuth);
-        navigation.navigate("VerifyCode", { phone: form.phone });
+        const resp2 = await sendOtp(form.phone);
+        if (!resp2?.status) throw new Error(resp2?.message);
+
+        navigation.navigate("VerifyCode", { phone: form.phone, login: true });
         setForm({ ...form, phone: "" });
         setSpinner(false);
       } else {

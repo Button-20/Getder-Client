@@ -12,6 +12,9 @@ export const Colors = {
   button_disabled: "#CCCDCF",
   button_disabled_2: "#B9D0E7",
   text_danger: "#F3164E",
+  success: "#00BC66",
+  // accent: "#D5FF0C",
+  error: "#F00",
 };
 
 export const Fonts = {

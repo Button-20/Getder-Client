@@ -7,10 +7,10 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Dimensions,
 } from "react-native";
 import { OtpInput } from "react-native-otp-entry";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { usePhoneAuthContext } from "../../context/PhoneAuthContext";
 import { useSpinnerContext } from "../../context/SpinnerContext";
 import { useUserContext } from "../../context/UserContext";
 import { storageService } from "../../lib/storage.service";
@@ -18,6 +18,7 @@ import {
   getProfile,
   postLogin,
   postRegister,
+  sendOtp,
   verifyOtp,
 } from "../../services/user.service";
 import {
@@ -27,15 +28,18 @@ import {
   Fonts,
   Spacing,
 } from "../../utils/styles";
+import { useToast } from "react-native-toast-notifications";
+
+const { width } = Dimensions.get("window");
 
 const VerifyCode = ({ route, navigation }) => {
-  const { phoneAuth, setPhoneAuth } = usePhoneAuthContext();
-
   const { spinner, setSpinner } = useSpinnerContext();
 
   const { setUser } = useUserContext();
 
   const [otp, setOtp] = useState("");
+
+  const toast = useToast();
 
   useEffect(() => {
     if (otp.length === 6) {
@@ -45,25 +49,25 @@ const VerifyCode = ({ route, navigation }) => {
     }
   }, [otp]);
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (text) => {
     try {
       // Validate the form
-      if (otp.length !== 4) return;
+      if (text.length !== 4) return;
 
       setSpinner(true);
       // If there are no errors, submit the form
       const verificationResp = await verifyOtp({
         phone: route.params.phone,
-        otp,
+        otp: text,
       });
 
       let resp;
-      if (verificationResp?.status) {
-        resp = await postRegister(registeringUser);
-        await storageService.removeRegisterUser();
+
+      if (!route.params?.login) {
+        resp = await postRegister({ ...route.params });
       } else {
         resp = await postLogin({
-          phone: userCredentials.user.phoneNumber,
+          phone: route.params.phone,
           authMethod: "local",
         });
       }
@@ -75,6 +79,9 @@ const VerifyCode = ({ route, navigation }) => {
     } catch (error) {
       setSpinner(false);
       console.log("Error: ", error);
+      toast.show(error?.message, {
+        type: "danger",
+      });
     }
   };
 
@@ -84,6 +91,9 @@ const VerifyCode = ({ route, navigation }) => {
       return resp.data;
     } catch (error) {
       console.log("Error: ", error);
+      toast.show(error?.message, {
+        type: "danger",
+      });
     }
   };
 
@@ -116,10 +126,13 @@ const VerifyCode = ({ route, navigation }) => {
               value={otp}
               autoFocus
               onTextChange={(text) => setOtp(text)}
-              onFilled={handleSubmit}
+              onFilled={async (text) => await handleSubmit(text)}
               theme={{
                 pinCodeTextStyle: {
                   fontFamily: Fonts.bold,
+                },
+                pinCodeContainerStyle: {
+                  width: width / 4 / 1.5,
                 },
               }}
             />
@@ -147,17 +160,26 @@ const VerifyCode = ({ route, navigation }) => {
               <Text style={styles.verifyText}>Verify</Text>
             )}
           </TouchableOpacity>
-          <Text style={styles.subText}>
-            Didn't receive the code?{" "}
-            <Text
-              style={{
-                textDecorationLine: "underline",
-                fontWeight: "bold",
-              }}
+          <View style={styles.resendContainer}>
+            <Text style={styles.subText}>Didn't receive the code? </Text>
+            <TouchableOpacity
+              onPress={async () => await sendOtp({ phone: route.params.phone })}
+              activeOpacity={0.5}
             >
-              Resend Code
-            </Text>
-          </Text>
+              <Text
+                style={[
+                  styles.subText,
+                  {
+                    textDecorationLine: "underline",
+                    fontFamily: Fonts.bold,
+                    color: Colors.primary,
+                  },
+                ]}
+              >
+                Resend Code
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </SafeAreaView>
@@ -207,6 +229,7 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: FontSizes.m,
   },
+
   subText: {
     fontFamily: Fonts.regular,
     fontSize: FontSizes.s,
@@ -214,6 +237,13 @@ const styles = StyleSheet.create({
     color: Colors.text_muted,
     marginBottom: Spacing.xl,
   },
+
+  resendContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
   inputContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -221,6 +251,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     paddingHorizontal: Spacing.m - 5,
   },
+
   input: {
     borderWidth: 0.5,
     borderColor: Colors.text_muted,

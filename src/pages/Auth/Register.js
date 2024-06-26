@@ -11,7 +11,6 @@ import {
 } from "react-native";
 import PhoneInput from "react-native-phone-number-input";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { usePhoneAuthContext } from "../../context/PhoneAuthContext";
 import { useSpinnerContext } from "../../context/SpinnerContext";
 import { sendOtp } from "../../services/user.service";
 import {
@@ -22,13 +21,14 @@ import {
   Spacing,
 } from "../../utils/styles";
 import { phoneValidation } from "../../utils/validations";
+import { useToast } from "react-native-toast-notifications";
 
 const Register = ({ navigation }) => {
   const [wizard, setWizard] = useState(0);
 
   const { spinner, setSpinner } = useSpinnerContext();
 
-  const { setPhoneAuth } = usePhoneAuthContext();
+  const toast = useToast();
 
   const [form, setForm] = useState({
     phone: "",
@@ -78,9 +78,6 @@ const Register = ({ navigation }) => {
     try {
       if (form.firstname || form.lastname || form.phone) {
         setSpinner(true);
-        // const firebaseAuth = await auth().signInWithPhoneNumber(form.phone);
-        // console.log(firebaseAuth);
-        // setPhoneAuth(firebaseAuth);
         const resp = await sendOtp(form.phone);
         if (!resp?.status) throw new Error(resp?.message);
 
@@ -91,6 +88,11 @@ const Register = ({ navigation }) => {
       }
     } catch (error) {
       console.log("Error: ", error);
+      toast.show(error?.message, {
+        type: "danger",
+      });
+    } finally {
+      setSpinner(false);
     }
   };
 
@@ -240,7 +242,7 @@ const Register = ({ navigation }) => {
                 : !spinner && wizard === 2
                 ? "Sign Up"
                 : ""}
-              {spinner && <ActivityIndicator size={24} color="#1B1C20" />}
+              {spinner && <ActivityIndicator size={24} color="#ffffff" />}
             </Text>
           </TouchableOpacity>
           <View

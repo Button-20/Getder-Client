@@ -4,7 +4,7 @@ const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
 export const sendOtp = async (phone) => {
   try {
-    return await post(`${API_URL}/send-otp`, phone);
+    return await post(`${API_URL}/send-otp`, {phone});
   } catch (error) {
     console.error("Error sending otp: ", error);
   }

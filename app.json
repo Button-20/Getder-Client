@@ -24,7 +24,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#004080"
+        "backgroundColor": "#ffffff"
       },
       "package": "com.jasonaddy.clientside",
       "googleServicesFile": "./google-services.json"

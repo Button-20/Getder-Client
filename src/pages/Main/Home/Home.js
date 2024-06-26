@@ -123,7 +123,7 @@ const Home = ({ navigation }) => {
                     }}
                   >
                     <Image
-                      src={require("../../../../assets/images/location.png")}
+                      source={require("../../../../assets/images/location.png")}
                       style={{ width: 30, height: 30, resizeMode: "contain" }}
                     />
                   </Marker>
