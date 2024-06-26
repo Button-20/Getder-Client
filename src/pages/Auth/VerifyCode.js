@@ -61,6 +61,8 @@ const VerifyCode = ({ route, navigation }) => {
         otp: text,
       });
 
+      if (!verificationResp?.status) throw new Error(verificationResp?.message);
+
       let resp;
 
       if (!route.params?.login) {
