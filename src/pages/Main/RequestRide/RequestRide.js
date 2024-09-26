@@ -136,8 +136,6 @@ const RequestRide = ({ navigation }) => {
       };
     }
 
-    console.log(pickup_location, dropoff_location);
-
     fitMapToCoordinates(pickup_location, dropoff_location);
   }, [negotiation?.request]);
 
@@ -170,10 +168,28 @@ const RequestRide = ({ navigation }) => {
       pickup_location: `${pickup_location.lat},${pickup_location.lng}`,
       dropoff_location: `${dropoff_location.lat},${dropoff_location.lng}`,
     })
-      .then(({ rows }) => setTravelTime(rows[0].elements[0] || {}))
+      .then(({ rows }) => {
+        setTravelTime(rows[0].elements[0] || {});
+        calculateRecommendedPrice(rows[0].elements[0] || {});
+      })
       .catch((error) => {
         console.log("Error getting travel time: ", error);
       });
+  };
+
+  const calculateRecommendedPrice = (travelTime) => {
+    if (!travelTime) return;
+    const { distance, duration } = travelTime;
+    const baseFare = 20;
+    const distanceRate = 0.00005;
+    const timeRate = 0.0001;
+    const distanceCost = distance.value * distanceRate;
+    const timeCost = duration.value * timeRate;
+    const recommendedPrice = baseFare + distanceCost + timeCost;
+    return setRequest({
+      ...request,
+      suggested_price: Math.round((recommendedPrice * 250) / 100),
+    });
   };
 
   return (
@@ -220,7 +236,10 @@ const RequestRide = ({ navigation }) => {
           <TouchableOpacity
             style={styles.requestInputs}
             activeOpacity={0.8}
-            onPress={() => navigation.navigate("LocationSearch")}
+            onPress={() => {
+              closeBottomSheet(bottomSheetRef);
+              navigation.navigate("LocationSearch");
+            }}
           >
             <Text style={styles.input}>
               {request.pickup_location?.description || "Select your location"}

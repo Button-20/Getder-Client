@@ -20,7 +20,7 @@ import { storageService } from "../../../lib/storage.service";
 import { Colors, FontSizes, Fonts, Spacing } from "../../../utils/styles";
 
 const Profile = ({ navigation }) => {
-  const { user, setUser } = useUserContext();
+  const { user, setUser, setToken } = useUserContext();
 
   const LogoutUser = async () => {
     try {
@@ -37,7 +37,7 @@ const Profile = ({ navigation }) => {
             onPress: async () => {
               await storageService.clear();
               setUser(null);
-              navigation.navigate("Login");
+              setToken(null);
             },
           },
         ],

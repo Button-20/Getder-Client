@@ -3,51 +3,45 @@ import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Dimensions,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-  Dimensions,
 } from "react-native";
 import { OtpInput } from "react-native-otp-entry";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useSpinnerContext } from "../../context/SpinnerContext";
-import { useUserContext } from "../../context/UserContext";
-import { storageService } from "../../lib/storage.service";
+import { useToast } from "react-native-toast-notifications";
+import { useSpinnerContext } from "../../../context/SpinnerContext";
+import { useUserContext } from "../../../context/UserContext";
+import { storageService } from "../../../lib/storage.service";
 import {
   getProfile,
   postLogin,
   postRegister,
   sendOtp,
   verifyOtp,
-} from "../../services/user.service";
+} from "../../../services/user.service";
 import {
   BorderRadii,
   Colors,
   FontSizes,
   Fonts,
   Spacing,
-} from "../../utils/styles";
-import { useToast } from "react-native-toast-notifications";
+} from "../../../utils/styles";
 
 const { width } = Dimensions.get("window");
 
 const VerifyCode = ({ route, navigation }) => {
   const { spinner, setSpinner } = useSpinnerContext();
 
-  const { setUser } = useUserContext();
+  const { setUser, setToken } = useUserContext();
 
   const [otp, setOtp] = useState("");
 
   const toast = useToast();
 
-  useEffect(() => {
-    if (otp.length === 6) {
-      (async () => {
-        await handleSubmit();
-      })();
-    }
-  }, [otp]);
+  useEffect(() => {}, [otp]);
 
   const handleSubmit = async (text) => {
     try {
@@ -74,9 +68,9 @@ const VerifyCode = ({ route, navigation }) => {
         });
       }
       await storageService.setAccessToken(resp.token);
+      setToken(resp.token);
       setUser((await getUserProfile()) || null);
       setOtp("");
-      navigation.navigate("MainLayout");
       setSpinner(false);
     } catch (error) {
       setSpinner(false);

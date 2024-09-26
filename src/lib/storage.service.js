@@ -12,7 +12,7 @@ const SECRET_KEY = process.env.EXPO_PUBLIC_SECRET_KEY;
 
 const set = async (key, value) => {
   try {
-    let encryptedValue = CryptoES.AES.encrypt(
+    const encryptedValue = CryptoES.AES.encrypt(
       JSON.stringify(value),
       SECRET_KEY
     ).toString();
@@ -24,9 +24,9 @@ const set = async (key, value) => {
 
 const get = async (key) => {
   try {
-    let value = await AsyncStorage.getItem(key);
+    const value = await AsyncStorage.getItem(key);
     if (value) {
-      let decryptedValue = CryptoES.AES.decrypt(value, SECRET_KEY).toString(
+      const decryptedValue = CryptoES.AES.decrypt(value, SECRET_KEY).toString(
         CryptoES.enc.Utf8
       );
       return JSON.parse(decryptedValue);

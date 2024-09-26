@@ -2,48 +2,22 @@ import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useFonts } from "expo-font";
-import React, { useEffect, useState, useCallback } from "react";
+import * as SplashScreen from "expo-splash-screen";
+import React, { useCallback, useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { ToastProvider } from "react-native-toast-notifications";
+import CustomToast from "./src/components/ui/CustomToast";
 import { RequestProvider } from "./src/context/RequestContext";
 import { SpinnerProvider } from "./src/context/SpinnerContext";
-import { UserProvider } from "./src/context/UserContext";
-import Login from "./src/pages/Auth/Login";
-import Register from "./src/pages/Auth/Register";
-import Success from "./src/pages/Auth/Success";
-import VerifyCode from "./src/pages/Auth/VerifyCode";
+import { UserProvider, useUserContext } from "./src/context/UserContext";
+import AuthLayout from "./src/pages/Auth/AuthLayout";
 import MainLayout from "./src/pages/Main/MainLayout";
-import * as SplashScreen from "expo-splash-screen";
-import CustomToast from "./src/components/ui/CustomToast";
 import { Colors } from "./src/utils/styles";
-import { ToastProvider } from "react-native-toast-notifications";
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
-  const navigations = [
-    {
-      name: "Login",
-      component: Login,
-    },
-    {
-      name: "Register",
-      component: Register,
-    },
-    {
-      name: "VerifyCode",
-      component: VerifyCode,
-    },
-    {
-      name: "Success",
-      component: Success,
-    },
-    {
-      name: "MainLayout",
-      component: MainLayout,
-    },
-  ];
-
   const [appIsReady, setAppIsReady] = useState(false);
 
   const [fontsLoaded] = useFonts({
@@ -95,42 +69,51 @@ export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <View style={styles.container} onLayout={onLayoutRootView}>
-        <NavigationContainer>
-          <UserProvider>
-            <BottomSheetModalProvider mode="modal">
-              <SpinnerProvider>
-                <ToastProvider
-                  placement="top"
-                  successColor={Colors.success}
-                  dangerColor="#FF5353"
-                  normalColor="#FFBD2E"
-                  offsetTop={35}
-                  duration={5000}
-                  renderToast={(props) => <CustomToast {...props} />}
-                >
-                  <RequestProvider>
-                    <Stack.Navigator>
-                      {navigations.map((navigation, index) => (
-                        <Stack.Screen
-                          options={{
-                            headerShown: false,
-                          }}
-                          key={index}
-                          name={navigation.name}
-                          component={navigation.component}
-                        />
-                      ))}
-                    </Stack.Navigator>
-                  </RequestProvider>
-                </ToastProvider>
-              </SpinnerProvider>
-            </BottomSheetModalProvider>
-          </UserProvider>
-        </NavigationContainer>
+        <UserProvider>
+          <BottomSheetModalProvider mode="modal">
+            <SpinnerProvider>
+              <ToastProvider
+                placement="top"
+                successColor={Colors.success}
+                dangerColor="#FF5353"
+                normalColor="#FFBD2E"
+                offsetTop={35}
+                duration={5000}
+                renderToast={(props) => <CustomToast {...props} />}
+              >
+                <RequestProvider>
+                  <Layout />
+                </RequestProvider>
+              </ToastProvider>
+            </SpinnerProvider>
+          </BottomSheetModalProvider>
+        </UserProvider>
       </View>
     </GestureHandlerRootView>
   );
 }
+
+const Layout = () => {
+  const { token, user } = useUserContext();
+
+  return (
+    <NavigationContainer>
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+          animation: "slide_from_right",
+          animationDuration: 5000,
+        }}
+      >
+        {!user || !token ? (
+          <Stack.Screen name="Auth" component={AuthLayout} />
+        ) : (
+          <Stack.Screen name="Main" component={MainLayout} />
+        )}
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {

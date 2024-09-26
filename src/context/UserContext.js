@@ -4,16 +4,27 @@ const { storageService } = require("../lib/storage.service");
 export const UserContext = createContext({
   user: null,
   setUser: () => {},
+  token: null,
+  setToken: () => {},
 });
 
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+
+  const [token, setToken] = useState(null);
 
   useEffect(() => {
     (async () => {
       let savedUser = await storageService.getUserDetails();
       if (savedUser) {
         setUser(savedUser);
+      }
+    })();
+
+    (async () => {
+      let savedToken = await storageService.getAccessToken();
+      if (savedToken) {
+        setToken(savedToken);
       }
     })();
   }, []);
@@ -28,8 +39,18 @@ export const UserProvider = ({ children }) => {
     }
   }, [user]);
 
+  useEffect(() => {
+    const setAccessToken = async (accessToken) => {
+      await storageService.setAccessToken(accessToken);
+    };
+
+    if (token !== null) {
+      setAccessToken(token);
+    }
+  }, [token]);
+
   return (
-    <UserContext.Provider value={{ user, setUser }}>
+    <UserContext.Provider value={{ user, setUser, token, setToken }}>
       {children}
     </UserContext.Provider>
   );

@@ -11,17 +11,17 @@ import {
 } from "react-native";
 import PhoneInput from "react-native-phone-number-input";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useSpinnerContext } from "../../context/SpinnerContext";
-import { sendOtp } from "../../services/user.service";
+import { useToast } from "react-native-toast-notifications";
+import { useSpinnerContext } from "../../../context/SpinnerContext";
+import { sendOtp } from "../../../services/user.service";
 import {
   BorderRadii,
   Colors,
   FontSizes,
   Fonts,
   Spacing,
-} from "../../utils/styles";
-import { phoneValidation } from "../../utils/validations";
-import { useToast } from "react-native-toast-notifications";
+} from "../../../utils/styles";
+import { phoneValidation } from "../../../utils/validations";
 
 const Register = ({ navigation }) => {
   const [wizard, setWizard] = useState(0);

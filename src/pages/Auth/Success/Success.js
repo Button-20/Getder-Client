@@ -1,14 +1,14 @@
 import React, { useEffect } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { getProfile } from "../../services/user.service";
+import { getProfile } from "../../../services/user.service";
 import {
   BorderRadii,
   Colors,
   FontSizes,
   Fonts,
   Spacing,
-} from "../../utils/styles";
+} from "../../../utils/styles";
 
 /**
  * Functional component for displaying a success message and navigation button
@@ -32,7 +32,7 @@ const Success = ({ navigation }) => {
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.container}>
         <Image
-          source={require("../../../assets/images/success.png")}
+          source={require("../../../../assets/images/success.png")}
           style={{ width: 80, height: 80 }}
         />
         <Text style={styles.heading}>Congratulations, Dennis</Text>

@@ -1,7 +1,7 @@
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import React, { useMemo } from "react";
-import { useCarTypesContext } from "../../context/CarTypesContext";
+import React from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useCarTypesContext } from "../../context/CarTypesContext";
 import {
   BorderRadii,
   Colors,
@@ -18,7 +18,7 @@ const RequestDetails = ({
   postRequest,
   travelTime,
 }) => {
-  const {carTypes} = useCarTypesContext();
+  const { carTypes } = useCarTypesContext();
 
   return (
     <BottomSheetModal
@@ -30,10 +30,14 @@ const RequestDetails = ({
       <View>
         <View style={styles.bottomSheetHeader}>
           <Text style={styles.bottomSheetHeaderText}>
-            Recommended price GHS12,900
+            Recommended price:{" "}
+            {request?.suggested_price
+              ? `GHS ${request?.suggested_price}`
+              : "Calculating..."}
           </Text>
           <Text style={styles.bottomSheetHeaderText}>
-            Travel time: {travelTime ? `~${travelTime.duration.text}` : "Calculating..."}
+            Travel time:{" "}
+            {travelTime ? `~${travelTime.duration.text}` : "Calculating..."}
           </Text>
         </View>
         <View>

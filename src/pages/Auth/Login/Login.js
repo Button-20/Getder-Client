@@ -1,33 +1,31 @@
 import { AntDesign } from "@expo/vector-icons";
-import auth from "@react-native-firebase/auth";
+import { decode as atob } from "base-64";
 import * as Google from "expo-auth-session/providers/google";
 import { StatusBar } from "expo-status-bar";
 import * as WebBrowser from "expo-web-browser";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
 import PhoneInput, { isValidNumber } from "react-native-phone-number-input";
-import { decode as atob } from "base-64";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useSpinnerContext } from "../../context/SpinnerContext";
-import { useUserContext } from "../../context/UserContext";
-import { storageService } from "../../lib/storage.service";
-import { getProfile, postLogin, sendOtp } from "../../services/user.service";
+import { useToast } from "react-native-toast-notifications";
+import { useSpinnerContext } from "../../../context/SpinnerContext";
+import { useUserContext } from "../../../context/UserContext";
+import { storageService } from "../../../lib/storage.service";
+import { getProfile, postLogin, sendOtp } from "../../../services/user.service";
 import {
   BorderRadii,
   Colors,
   FontSizes,
   Fonts,
   Spacing,
-} from "../../utils/styles";
-import { phoneValidation } from "../../utils/validations";
-import { useToast } from "react-native-toast-notifications";
+} from "../../../utils/styles";
+import { phoneValidation } from "../../../utils/validations";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -144,6 +142,9 @@ const Login = ({ navigation }) => {
       } else {
         console.log("Error: ", resp);
         setSpinner(false);
+        toast.show(resp?.message, {
+          type: "danger",
+        });
       }
     } catch (error) {
       console.log("Error: ", error);
